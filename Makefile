@@ -1,6 +1,7 @@
-scanner: scanner.l
+parser: scanner.l parser.y
 	lex scanner.l
-	gcc -o scanner lex.yy.c
+	byacc -d parser.y
+	gcc -o parser lex.yy.c y.tab.c
 clean:
-	rm -f scanner
+	rm -f parser
 	rm -f lex.yy.c

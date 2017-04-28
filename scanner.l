@@ -89,6 +89,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		lineCount++;
 		BEGIN 0;
 	}
+	return ENDLINE;
 }
 <STATE>\/\*.*\*\/ {
 }
@@ -157,21 +158,25 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{type} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return TYPE;
 }
 
 <STATE>{double_operator} {
 	strcpy(tempstring,yytext);
 	PrintToken("#op");
+	return OP;
 }
 
 <STATE>{single_operator} {
 	strcpy(tempstring,yytext);
 	PrintToken("#op");
+	return OP;
 }
 
 <STATE>{punctuation} {
 	strcpy(tempstring,yytext);
 	PrintToken("#punc");
+	return PUNC;
 }
 
 <STATE>" "|"\t"
@@ -179,6 +184,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{id} {
 	strcpy(tempstring,yytext);
 	PrintToken("#id");
+	return ID;
 }
 
 <STATE>{Invalid_id} {
@@ -193,11 +199,13 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{sci} {
 	strcpy(tempstring,yytext);
 	PrintToken("#sci");
+	return NUM;
 }
 
 <STATE>{Double} {
 	strcpy(tempstring,yytext);
 	PrintToken("#double");
+	return NUM;
 }
 <STATE>{Invalid_int} {
 	fprintf(stderr, "Error at line %d: %s\n",yylineno,yytext);
@@ -207,6 +215,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{Int} {
 	strcpy(tempstring,yytext);
 	PrintToken("#integer");
+	return NUM;
 }
 
 <STATE>. {
@@ -216,3 +225,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 
 
 %%
+int yywrap()
+{
+	return 1;
+}
