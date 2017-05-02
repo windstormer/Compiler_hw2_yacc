@@ -8,26 +8,32 @@ extern char* yytext;
 %union{
 	char* sVal;
 }
-%token ID OP NUM PUNC TYPE ENDLINE SEM
+%token ID OP NUM PUNC TYPE ENDLINE SEM COMMA
 %%
 
-Whole: TYPE S ENDLINE Whole{printf("0\n");}
+Whole: TYPE S ENDLINE Whole
      | ENDLINE Whole;
      ;
 
-S: S exp SEM {printf("1\n");}
- | exp SEM {printf("2\n");}
+S: S exp SEM
+ | exp COMMA
+ | exp SEM
  ; 
 
-exp: ID exp_plum {printf("3\n");}
-   | ID {printf("4\n");}
-   | ID Arr {printf("6\n");}
+exp: ID exp_plum
+   | ID
+   | ID Arr INI
+   | ID Arr
    ;
 
-exp_plum: OP NUM {printf("5\n");}
+exp_plum: OP NUM
         ;
 Arr: PUNC NUM PUNC
    | Arr PUNC NUM PUNC
+   ;
+INI: OP PUNC NUM CON PUNC
+CON: CON COMMA NUM
+   | COMMA NUM
    ;
 %%
 int main(void){
