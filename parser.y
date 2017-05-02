@@ -11,35 +11,74 @@ extern char* yytext;
 %union{
 	char* sVal;
 }
-%token ID OP NUM PUNC TYPE ENDLINE SEM COMMA
+%token ID OP PUNC TYPE CHAR_TYPE
+%token IN DOU TF CHA STR/*STR not done yet*/
+%token ENDLINE
+%token CONS VOI
 %%
 
-program: TYPE S ENDLINE program
-     | ENDLINE program;
+program:line ENDLINE program;
      | 
      ;
 
-S: S exp SEM
- | exp COMMA
- | exp SEM
+line: line TYPE S
+    | line CONS TYPE cons_S
+    | line CHAR_TYPE CHAR_S
+	| 
+	;
+
+/////////////////Normal exp/////////////////////
+S: S exp ';'
+ | exp ','
+ | exp ';'
  ; 
 
 exp: ID exp_plum
-   | ID
-   | ID Arr INI
+   | ID Arr Arr_INI
    | ID Arr
    ;
 
-exp_plum: OP NUM
+/////////////////Const exp///////////
+cons_S: cons_S cons_exp ';'
+ | cons_exp ','
+ | cons_exp ';'
+ ; 
+
+cons_exp: ID exp_plum
+   ;
+
+   /////////////////Char and Char array////////////////
+CHAR_S: CHAR_S CHAR_exp ';'
+	  | CHAR_exp ','
+	  | CHAR_exp ';'
+	  ; 
+CHAR_exp: ID exp_plum
+        | ID Arr StringINI
         ;
-Arr: PUNC NUM PUNC
-   | Arr PUNC NUM PUNC
+StringINI: OP STR
+         | 
+         ;
+
+
+exp_plum: OP NUM
+		| 
+        ;
+////////////////Normal Array////////////////
+Arr: PUNC IN PUNC
+   | Arr PUNC IN PUNC
    ;
-INI: OP PUNC NUM CON PUNC
+Arr_INI: OP PUNC NUM CON PUNC /*={2CON}*/
    | OP PUNC NUM PUNC
+   ;   
+CON: CON ',' NUM
+   | ',' NUM
    ;
-CON: CON COMMA NUM
-   | COMMA NUM
+
+///////////////Value select//////////////   
+NUM: IN
+   | DOU
+   | TF
+   | CHA
    ;
 %%
 int main(void){
@@ -47,7 +86,7 @@ int main(void){
 	return 0;
 }
 int yyerror(char *s){
-	fprintf( stderr, "*** Error at line %d: %s\n", lineCount, lastsentence );
+	fprintf( stderr, "*** Error at line %d: %s\n", lineCount+1, lastsentence );
 	fprintf( stderr, "\n" );
 	fprintf( stderr, "Unmatched token: %s\n", yytext );
 	fprintf( stderr, "*** syntax error\n");

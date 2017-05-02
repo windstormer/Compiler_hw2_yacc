@@ -26,8 +26,9 @@ stdchio "fgetc"|"fgets"|"fputc"|"fputs"|"getc"|"getchar"|"gets"|"putc"|"putchar"
 stdblio "fread"|"fwrite"
 stdfilepos "fgetpos"|"fseek"|"fsetpos"|"ftell"|"rewind"
 stderror "clearerr"|"feof"|"ferror"|"perror"
-key "for"|"while"|"do"|"if"|"else"|"switch"|"break"|"continue"|"true"|"false"|"case"|"return"|"void"|"null"|"const"|"default"
+key "for"|"while"|"do"|"if"|"else"|"switch"|"break"|"continue"|"case"|"return"|"void"|"null"|"const"|"default"
 type "int"|"double"|"short"|"float"|"char"|"bool"|"unsigned double"|"unsigned int"|"unsigned short"|"unsigned float"|"unsigned char"|"struct"|"unsigned"
+logic "true"|"false"
 double_operator (\+\+|--|<<|>>|==|<=|>=|!=|\|\||\&\&)
 single_operator (\+|-|<|>|\*|\/|!|\||\&|\%|=)
 punctuation (:|;|,|\.|\[|\]|\(|\)|\{|\})
@@ -120,15 +121,21 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 	strncpy(tempstring,yytext+1,strlen(yytext)-2);
 	tempstring[strlen(yytext)-2]='\0';
 	PrintToken("#string");
+	return STR;
 }
 
 <STATE>{chars} {
 	strcpy(tempstring,yytext);
 	PrintToken("#char");
+	return CHA;
 }
 
 <STATE>{key} { 
 	strcpy(tempstring,yytext);
+	if(strcmp(yytext,"const")==0)
+		return CONS;
+	if(strcmp(yytext,"void")==0)
+		return VOI;
 	PrintToken("#key");
 }
 <STATE>{stdio} { 
@@ -158,7 +165,14 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{type} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	if(strcmp(yytext,"char")==0)
+		return CHAR_TYPE;
 	return TYPE;
+}
+<STATE>{logic} { 
+	strcpy(tempstring,yytext);
+	PrintToken("#key");
+	return TF;
 }
 
 <STATE>{double_operator} {
@@ -177,9 +191,9 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 	strcpy(tempstring,yytext);
 	PrintToken("#punc");
 	if(strcmp(yytext,";")==0)
-		return SEM;
+		return ';';
 	if(strcmp(yytext,",")==0)
-		return COMMA;
+		return ',';
 	return PUNC;
 }
 
@@ -203,13 +217,13 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{sci} {
 	strcpy(tempstring,yytext);
 	PrintToken("#sci");
-	return NUM;
+	return DOU;
 }
 
 <STATE>{Double} {
 	strcpy(tempstring,yytext);
 	PrintToken("#double");
-	return NUM;
+	return DOU;
 }
 <STATE>{Invalid_int} {
 	fprintf(stderr, "Error at line %d: %s\n",yylineno,yytext);
@@ -219,7 +233,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{Int} {
 	strcpy(tempstring,yytext);
 	PrintToken("#integer");
-	return NUM;
+	return IN;
 }
 
 <STATE>. {
