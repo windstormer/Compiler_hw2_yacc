@@ -13,18 +13,18 @@ int function_exist=0;
 %union{
 	char* sVal;
 }
-%token ID OP PUNC TYPE CHAR_TYPE VOI
+%token ID OP PUNC TYPE CHAR_TYPE
 %token IN DOU TF CHA STR
 %token ENDLINE
-%token CONS
+%token CONS VOI
 %%
 
 program:line ENDLINE program;
      | 
      ;
 
-line: line TYPE S
-    | line CONS TYPE cons_S
+line: line TYPE S ';'
+    | line CONS TYPE cons_S ';'
     | line fun {
      	if(function_exist==2) yyerror("function nested");
     	function_exist=1;
@@ -35,7 +35,7 @@ line: line TYPE S
 
 
 /////////////////Function define////////////////
-fun_use: ID '(' expr ')' ';'
+fun_use: func_return ';'
 	   | '{' {function_exist=2;}
 	   | '}' {function_exist=3;}
 	   ;
@@ -53,9 +53,8 @@ para_style: TYPE ID
           | TYPE ID Arr
           ;
 /////////////////Normal exp/////////////////////
-S: S exp ';'
- | exp ','
- | exp ';'
+S: exp ',' S
+ | exp
  ; 
 
 exp: ID exp_plum
@@ -64,10 +63,9 @@ exp: ID exp_plum
    ;
 
 /////////////////Const exp///////////
-cons_S: cons_S cons_exp ';'
- | cons_exp ','
- | cons_exp ';'
- ; 
+cons_S: cons_exp ',' cons_S
+      | cons_exp
+      ;
 
 cons_exp: ID exp_plum
    ;
@@ -75,7 +73,7 @@ cons_exp: ID exp_plum
 
 
 exp_plum: OP NUM
-		| OP ID '(' expr ')'
+		| OP func_return
 		| 
         ;
 
@@ -97,6 +95,9 @@ NUM: IN
    ;
 
 ///////////////expression////////////////
+func_return: ID '(' expr ')'
+		   ;
+
 expr: NUM con
 	| NUM
 	| 
