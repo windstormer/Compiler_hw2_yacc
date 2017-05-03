@@ -13,10 +13,10 @@ int function_exist=0;
 %union{
 	char* sVal;
 }
-%token ID OP PUNC TYPE CHAR_TYPE
+%token ID OP PUNC TYPE CHAR_TYPE VOI
 %token IN DOU TF CHA STR
 %token ENDLINE
-%token CONS VOI
+%token CONS
 %%
 
 program:line ENDLINE program;
@@ -25,15 +25,26 @@ program:line ENDLINE program;
 
 line: line TYPE S
     | line CONS TYPE cons_S
-    | line TYPE fun {function_exist=1;}
-    | line '{' {function_exist=2;}
-	| line '}' {function_exist=3;}
+    | line fun {
+     	if(function_exist==2) yyerror("function nested");
+    	function_exist=1;
+    				}
+	| line fun_use
 	| 
 	;
+
+
 /////////////////Function define////////////////
-fun: ID '(' para ')'
-   | ID '(' ')'
+fun_use: ID '(' expr ')' ';'
+	   | '{' {function_exist=2;}
+	   | '}' {function_exist=3;}
+	   ;
+fun: TYPE ID '(' para ')'
+   | TYPE ID '(' ')'
+   | VOI ID '(' para ')'
+   | VOI ID '(' ')'
    ;
+
 para: para_style ',' para
     | para_style
     ;
@@ -64,18 +75,18 @@ cons_exp: ID exp_plum
 
 
 exp_plum: OP NUM
+		| OP ID '(' expr ')'
 		| 
         ;
+
+
 ////////////////Normal Array////////////////
 Arr: PUNC IN PUNC
    | Arr PUNC IN PUNC
    ;
-Arr_INI: OP '{' NUM con '}' /*={con}*/
-   | OP '{' NUM '}'
-   ;   
-con: con ',' NUM //connect
-   | ',' NUM
-   ;
+Arr_INI: OP '{' expr '}' /*={con}*/
+   ; 
+
 
 ///////////////Value select//////////////   
 NUM: IN
@@ -83,6 +94,15 @@ NUM: IN
    | TF
    | CHA
    | STR
+   ;
+
+///////////////expression////////////////
+expr: NUM con
+	| NUM
+	| 
+	;  
+con: con ',' NUM //connect
+   | ',' NUM
    ;
 %%
 int main(void){
@@ -95,6 +115,8 @@ int main(void){
 	return 0;
 }
 int yyerror(char *s){
+	fprintf( stderr, "Error message: %s\n",s);
+
 	fprintf( stderr, "*** Error at line %d: %s\n", lineCount+1, lastsentence );
 	fprintf( stderr, "\n" );
 	fprintf( stderr, "Unmatched token: %s\n", yytext );
