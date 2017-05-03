@@ -176,13 +176,48 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{double_operator} {
 	strcpy(tempstring,yytext);
 	PrintToken("#op");
-	return OP;
+	if(strcmp(yytext,"||")==0)
+	 return LOR;
+	if(strcmp(yytext,"&&")==0)
+	 return LAND;
+	if(strcmp(yytext,"!=")==0)
+	 return LNOT;
+	if(strcmp(yytext,"++")==0)
+	 return DP;
+	if(strcmp(yytext,"--")==0)
+	 return DM;
+	if(strcmp(yytext,">=")==0)
+	 return COMP;
+	if(strcmp(yytext,"<=")==0)
+	 return COMP;
+	if(strcmp(yytext,"==")==0)
+	 return COMP;
+	if(strcmp(yytext,"!=")==0)
+	 return COMP;
 }
 
 <STATE>{single_operator} {
 	strcpy(tempstring,yytext);
 	PrintToken("#op");
-	return OP;
+
+	if(strcmp(yytext,"=")==0)
+	 return '=';
+	if(strcmp(yytext,"+")==0)
+	 return '+';
+	if(strcmp(yytext,"-")==0)
+	 return '-';
+	if(strcmp(yytext,"*")==0) 
+	 return '*';
+	if(strcmp(yytext,"/")==0)
+	 return '/';
+	if(strcmp(yytext,"%")==0)
+	 return '%';
+	if(strcmp(yytext,"!")==0)
+	 return '!';
+	if(strcmp(yytext,">")==0)
+	 return COMP;
+	if(strcmp(yytext,"<")==0)
+	 return COMP;
 }
 
 <STATE>{punctuation} {
@@ -200,6 +235,10 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return '(';
 	if(strcmp(yytext,")")==0)
 		return ')';
+	if(strcmp(yytext,"[")==0)
+		return '[';
+	if(strcmp(yytext,"]")==0)
+		return ']';
 	return PUNC;
 }
 
