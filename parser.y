@@ -6,6 +6,8 @@
 extern int lineCount;
 extern char lastsentence[3000];
 extern char* yytext;
+int function_exist=0;
+
 %}
 %start program
 %union{
@@ -23,9 +25,22 @@ program:line ENDLINE program;
 
 line: line TYPE S
     | line CONS TYPE cons_S
+    | line TYPE fun {function_exist=1;}
+    | line '{' {function_exist=2;}
+	| line '}' {function_exist=3;}
 	| 
 	;
+/////////////////Function define////////////////
+fun: ID '(' para ')'
+   | ID '(' ')'
+   ;
+para: para_style ',' para
+    | para_style
+    ;
 
+para_style: TYPE ID
+          | TYPE ID Arr
+          ;
 /////////////////Normal exp/////////////////////
 S: S exp ';'
  | exp ','
@@ -55,10 +70,10 @@ exp_plum: OP NUM
 Arr: PUNC IN PUNC
    | Arr PUNC IN PUNC
    ;
-Arr_INI: OP PUNC NUM CON PUNC /*={2CON}*/
-   | OP PUNC NUM PUNC
+Arr_INI: OP '{' NUM con '}' /*={con}*/
+   | OP '{' NUM '}'
    ;   
-CON: CON ',' NUM
+con: con ',' NUM //connect
    | ',' NUM
    ;
 
@@ -72,6 +87,11 @@ NUM: IN
 %%
 int main(void){
 	yyparse();
+	if(function_exist!=3)
+	{
+		lastsentence[0]='\0';
+		yyerror(" ");
+	}
 	return 0;
 }
 int yyerror(char *s){
