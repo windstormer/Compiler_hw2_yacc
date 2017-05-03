@@ -12,7 +12,7 @@ extern char* yytext;
 	char* sVal;
 }
 %token ID OP PUNC TYPE CHAR_TYPE
-%token IN DOU TF CHA STR/*STR not done yet*/
+%token IN DOU TF CHA STR
 %token ENDLINE
 %token CONS VOI
 %%
@@ -23,7 +23,6 @@ program:line ENDLINE program;
 
 line: line TYPE S
     | line CONS TYPE cons_S
-    | line CHAR_TYPE CHAR_S
 	| 
 	;
 
@@ -47,17 +46,6 @@ cons_S: cons_S cons_exp ';'
 cons_exp: ID exp_plum
    ;
 
-   /////////////////Char and Char array////////////////
-CHAR_S: CHAR_S CHAR_exp ';'
-	  | CHAR_exp ','
-	  | CHAR_exp ';'
-	  ; 
-CHAR_exp: ID exp_plum
-        | ID Arr StringINI
-        ;
-StringINI: OP STR
-         | 
-         ;
 
 
 exp_plum: OP NUM
@@ -79,6 +67,7 @@ NUM: IN
    | DOU
    | TF
    | CHA
+   | STR
    ;
 %%
 int main(void){

@@ -165,8 +165,6 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{type} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
-	if(strcmp(yytext,"char")==0)
-		return CHAR_TYPE;
 	return TYPE;
 }
 <STATE>{logic} { 
