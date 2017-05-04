@@ -7,7 +7,8 @@ extern int lineCount;
 extern char lastsentence[3000];
 extern char* yytext;
 int function_exist=0;
-int compound=0;
+int compound[200]={0};
+int stack=0;
 
 %}
 %start program
@@ -19,6 +20,8 @@ int compound=0;
 %token ENDLINE
 %token CONS VOI
 %token LOR LAND LNOT COMP DP DM
+%token FOR
+%token IF ELSE
 
 %left LOR
 %left LAND
@@ -36,15 +39,11 @@ program:line ENDLINE program;
      | 
      ;
 
-line: line TYPE S ';' {if(compound==1) yyerror("strict order");}
-    | line CONS TYPE cons_S ';' {if(compound==1) yyerror("strict order");}
-    | line fun {
-      if(compound==1) yyerror("strict order");
-     	if(function_exist==2) yyerror("function nested");
-    	function_exist=1;
-    				}
+line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");}
+    | line CONS TYPE cons_S ';' {if(compound[stack]==1) yyerror("strict order");}
+    | line fun 
 	| line use ';' {
-    if(function_exist!=2) compound=1;
+    if(function_exist!=2) compound[stack]=1;
       }
   | line fun_struct
 	| 
@@ -56,10 +55,19 @@ use: ID exp_plum
    ;
 
 /////////////////Function define////////////////
-fun_struct: '{' {function_exist=2;}
-	   | '}' {function_exist=3;}
+fun_struct: '{' {if(function_exist==1)function_exist=2;else stack++;}
+	   | '}' {if(stack!=0)stack--;else function_exist=3;}
 	   ;
-fun: TYPE ID '(' para ')'
+fun: id_fun {
+      if(compound[stack]==1) yyerror("strict order");
+     	if(function_exist==2) yyerror("function nested");
+    	function_exist=1;
+    				}
+   | for_fun 
+   | if_fun
+   ;
+
+id_fun: TYPE ID '(' para ')'
    | TYPE ID '(' ')'
    | VOI ID '(' para ')'
    | VOI ID '(' ')'
@@ -74,6 +82,27 @@ para_style: TYPE ID
           ;
 func_return: ID '(' expr ')'
        ;
+////////////////if-condition define/////////////
+if_fun: IF '(' expression ')'
+	  | ELSE
+	  ;
+
+////////////////for-loop define///////////////
+for_fun: FOR '(' for_init ';' condition ';' for_last ')' end_for
+	   ;
+end_for: ';'	//self-define
+	   | 
+	   ;
+condition: expression
+		 | 
+		 ;
+for_init: S
+		| 
+		;
+for_last: expression ',' for_last
+		| expression
+		| 
+		;
 /////////////////Normal exp/////////////////////
 S: exp ',' S
  | exp
@@ -90,14 +119,14 @@ cons_S: cons_exp ',' cons_S
       ;
 
 cons_exp: ID exp_plum
-   ;
+   		;
 
 
 
 exp_plum: '=' expression
 		| '=' func_return
 		| 
-    ;
+   		;
 
 
 ////////////////Normal Array////////////////
@@ -139,6 +168,7 @@ expression: expression '+' expression
           | expression LOR expression
           | expression LAND expression
           | '(' expression ')'
+          | ID
           | UNUM
           ;
 

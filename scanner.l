@@ -136,6 +136,12 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return CONS;
 	if(strcmp(yytext,"void")==0)
 		return VOI;
+	if(strcmp(yytext,"for")==0)
+		return FOR;
+	if(strcmp(yytext,"if")==0)
+		return IF;
+	if(strcmp(yytext,"else")==0)
+		return ELSE;
 	PrintToken("#key");
 }
 <STATE>{stdio} { 
