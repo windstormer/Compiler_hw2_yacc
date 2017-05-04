@@ -23,6 +23,8 @@ int stack=0;
 %token FOR
 %token IF ELSE
 %token DO WHILE
+%token BREAK CONTINUE RETURN
+%token SWITCH CASE DEFAULT
 
 %left LOR
 %left LAND
@@ -50,6 +52,9 @@ line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");}
 /////////////////using///////////////////
 use: usage
    | func_return
+   | RETURN condition
+   | CONTINUE
+   | BREAK
    ;
 usage: ID '=' expression
    | ID '=' func_return
@@ -103,8 +108,9 @@ sem_or_not: ';'	//self-define
 condition: expression
 		 | 
 		 ;
-for_init: S
-		| 
+for_init: 
+		| usage ',' for_init
+		| usage
 		;
 for_last: expression ',' for_last
 		| expression

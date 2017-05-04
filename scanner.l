@@ -146,6 +146,18 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return DO;
 	if(strcmp(yytext,"while")==0)
 		return WHILE;
+	if(strcmp(yytext,"return")==0)
+		return RETURN;
+	if(strcmp(yytext,"break")==0)
+		return BREAK;
+	if(strcmp(yytext,"continue")==0)
+		return CONTINUE;
+	if(strcmp(yytext,"switch")==0)
+		return SWITCH;
+	if(strcmp(yytext,"case")==0)
+		return CASE;
+	if(strcmp(yytext,"default")==0)
+		return DEFAULT;
 	PrintToken("#key");
 }
 <STATE>{stdio} { 
