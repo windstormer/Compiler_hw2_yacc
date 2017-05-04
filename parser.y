@@ -42,9 +42,7 @@ program:line ENDLINE program;
 line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");}
     | line CONS TYPE cons_S ';' {if(compound[stack]==1) yyerror("strict order");}
     | line fun 
-	| line use ';' {
-    if(function_exist!=2) compound[stack]=1;
-      }
+	| line use ';' { compound[stack]=1; }
   | line fun_struct
 	| 
 	;
@@ -56,7 +54,7 @@ use: ID exp_plum
 
 /////////////////Function define////////////////
 fun_struct: '{' {if(function_exist==1)function_exist=2;else stack++;}
-	   | '}' {if(stack!=0)stack--;else function_exist=3;}
+	   | '}' {compound[stack]=0;if(stack!=0)stack--;else function_exist=3;}
 	   ;
 fun: id_fun {
       if(compound[stack]==1) yyerror("strict order");
