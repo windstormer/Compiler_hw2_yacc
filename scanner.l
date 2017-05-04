@@ -142,6 +142,10 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return IF;
 	if(strcmp(yytext,"else")==0)
 		return ELSE;
+	if(strcmp(yytext,"do")==0)
+		return DO;
+	if(strcmp(yytext,"while")==0)
+		return WHILE;
 	PrintToken("#key");
 }
 <STATE>{stdio} { 

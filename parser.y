@@ -22,6 +22,7 @@ int stack=0;
 %token LOR LAND LNOT COMP DP DM
 %token FOR
 %token IF ELSE
+%token DO WHILE
 
 %left LOR
 %left LAND
@@ -43,13 +44,17 @@ line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");}
     | line CONS TYPE cons_S ';' {if(compound[stack]==1) yyerror("strict order");}
     | line fun 
 	| line use ';' { compound[stack]=1; }
-  | line fun_struct
+	| line fun_struct
 	| 
 	;
 /////////////////using///////////////////
-use: ID exp_plum
-   | ID Arr Arr_INI
+use: usage
    | func_return
+   ;
+usage: ID '=' expression
+   | ID '=' func_return
+   | ID Arr '=' expression
+   | expression
    ;
 
 /////////////////Function define////////////////
@@ -63,6 +68,7 @@ fun: id_fun {
     				}
    | for_fun 
    | if_fun
+   | while_fun
    ;
 
 id_fun: TYPE ID '(' para ')'
@@ -84,11 +90,14 @@ func_return: ID '(' expr ')'
 if_fun: IF '(' expression ')'
 	  | ELSE
 	  ;
-
+////////////////while-loop define////////////////
+while_fun: WHILE '(' expression ')' sem_or_not
+		 | DO
+		 ;
 ////////////////for-loop define///////////////
-for_fun: FOR '(' for_init ';' condition ';' for_last ')' end_for
+for_fun: FOR '(' for_init ';' condition ';' for_last ')' sem_or_not
 	   ;
-end_for: ';'	//self-define
+sem_or_not: ';'	//self-define
 	   | 
 	   ;
 condition: expression
