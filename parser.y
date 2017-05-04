@@ -14,9 +14,7 @@ int default_place=0;
 
 %}
 %start program
-%union{
-	char* sVal;
-}
+
 %token ID PUNC TYPE CHAR_TYPE
 %token IN DOU TF CHA STR
 %token ENDLINE
