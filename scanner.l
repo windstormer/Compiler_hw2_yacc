@@ -202,8 +202,6 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 	 return LOR;
 	if(strcmp(yytext,"&&")==0)
 	 return LAND;
-	if(strcmp(yytext,"!=")==0)
-	 return LNOT;
 	if(strcmp(yytext,"++")==0)
 	 return DP;
 	if(strcmp(yytext,"--")==0)
@@ -240,6 +238,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 	 return COMP;
 	if(strcmp(yytext,"<")==0)
 	 return COMP;
+
 }
 
 <STATE>{punctuation} {
@@ -261,6 +260,8 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return '[';
 	if(strcmp(yytext,"]")==0)
 		return ']';
+	if(strcmp(yytext,":")==0)
+		return ':';
 	return PUNC;
 }
 

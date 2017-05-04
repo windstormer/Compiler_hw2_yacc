@@ -9,6 +9,8 @@ extern char* yytext;
 int function_exist=0;
 int compound[200]={0};
 int stack=0;
+int switchcase=0;
+int default_place=0;
 
 %}
 %start program
@@ -28,7 +30,7 @@ int stack=0;
 
 %left LOR
 %left LAND
-%nonassoc LNOT
+%nonassoc '!'
 %left COMP '='
 %left '+' '-'
 %left '*' '/' '%'
@@ -64,7 +66,13 @@ usage: ID '=' expression
 
 /////////////////Function define////////////////
 fun_struct: '{' {if(function_exist==1)function_exist=2;else stack++;}
-	   | '}' {compound[stack]=0;if(stack!=0)stack--;else function_exist=3;}
+	   | '}' {
+	   	compound[stack]=0;
+	   	if(stack!=0)stack--;
+	   	else function_exist=3;
+	   	if(switchcase==1) yyerror("switch with no case");
+	   	default_place=0;
+	   }
 	   ;
 fun: id_fun {
       if(compound[stack]==1) yyerror("strict order");
@@ -74,6 +82,7 @@ fun: id_fun {
    | for_fun 
    | if_fun
    | while_fun
+   | switch_fun
    ;
 
 id_fun: TYPE ID '(' para ')'
@@ -99,6 +108,11 @@ if_fun: IF '(' expression ')'
 while_fun: WHILE '(' expression ')' sem_or_not
 		 | DO
 		 ;
+////////////////switch define//////////////////
+switch_fun: SWITCH '(' ID ')' {switchcase=1;}
+		  | CASE int_char ':' {switchcase=0;if(default_place==1)yyerror("default not at last");}
+		  | DEFAULT ':' {default_place=1;}
+		  ;
 ////////////////for-loop define///////////////
 for_fun: FOR '(' for_init ';' condition ';' for_last ')' sem_or_not
 	   ;
@@ -160,6 +174,9 @@ NUM: IN
 UNUM: '-' NUM
     | NUM
     ;
+int_char: IN
+		| CHA
+		;
 
 ///////////////expression////////////////
 expr: expression con
@@ -183,6 +200,7 @@ expression: expression '+' expression
           | '(' expression ')'
           | ID
           | UNUM
+          | '!' expression
           ;
 
 %%
