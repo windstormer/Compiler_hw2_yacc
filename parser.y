@@ -51,13 +51,11 @@ line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");}
 	;
 /////////////////using///////////////////
 use: usage
-   | func_return
    | RETURN condition
    | CONTINUE
    | BREAK
    ;
 usage: ID '=' expression
-   | ID '=' func_return
    | ID Arr '=' expression
    | expression
    ;
@@ -96,7 +94,7 @@ para: para_style ',' para
 para_style: TYPE ID
           | TYPE ID Arr
           ;
-func_return: ID '(' expr ')'
+func_invocation: ID '(' expr ')'
        ;
 ////////////////if-condition define/////////////
 if_fun: IF '(' expression ')'
@@ -149,7 +147,6 @@ cons_exp: ID exp_plum
 
 
 exp_plum: '=' expression
-		| '=' func_return
 		| 
    		;
 
@@ -199,6 +196,8 @@ expression: expression '+' expression
           | ID
           | UNUM
           | '!' expression
+          | func_invocation
+          | ID Arr
           ;
 
 %%
@@ -209,6 +208,7 @@ int main(void){
 		lastsentence[0]='\0';
 		yyerror(" ");
 	}
+  printf("No syntax error!\n");
 	return 0;
 }
 int yyerror(char *s){
