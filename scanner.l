@@ -159,7 +159,6 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 	if(strcmp(yytext,"default")==0)
 		return DEFAULT;
 	PrintToken("#key");
-	return ID;
 }
 <STATE>{stdio} { 
 	strcpy(tempstring,yytext);
@@ -194,7 +193,8 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 <STATE>{type} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
-	return TYPE;
+	if(strcmp(yytext,"struct")!=0)
+		return TYPE;
 }
 <STATE>{logic} { 
 	strcpy(tempstring,yytext);
