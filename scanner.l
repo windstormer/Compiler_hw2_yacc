@@ -159,30 +159,37 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 	if(strcmp(yytext,"default")==0)
 		return DEFAULT;
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{stdio} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{stdfile} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{stdchio} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{stdblio} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{stdfilepos} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{stderror} { 
 	strcpy(tempstring,yytext);
 	PrintToken("#key");
+	return ID;
 }
 <STATE>{type} { 
 	strcpy(tempstring,yytext);
