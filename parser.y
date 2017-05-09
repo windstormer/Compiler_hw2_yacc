@@ -146,7 +146,7 @@ cons_exp: ID exp_plum
 
 
 
-exp_plum: '=' expression
+exp_plum: '=' initialize_expression
 		| 
    		;
 
@@ -181,6 +181,23 @@ expr: expression con
 con: con ',' expression //connect
    | ',' expression
    ;
+
+initialize_expression: expression '+' expression
+          | expression '-' expression
+          | expression '*' expression
+          | expression '/' expression
+          | expression '%' expression
+          | expression DP
+          | expression DM
+          | expression COMP expression
+          | expression LOR expression
+          | expression LAND expression
+          | '(' expression ')'
+          | ID
+          | UNUM
+          | '!' expression
+          | ID Arr
+          ;
 
 expression: expression '+' expression
           | expression '-' expression
