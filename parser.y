@@ -42,7 +42,8 @@ program:line ENDLINE program;
      | 
      ;
 
-line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");}
+line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");
+                        if(switchcase==2)yyerror("define in switchcase");}
     | line CONS TYPE cons_S ';' {if(compound[stack]==1) yyerror("strict order");}
     | line fun 
 	| line use ';' { compound[stack]=1; }
@@ -68,6 +69,7 @@ fun_struct: '{' {if(function_exist==1)function_exist=2;else stack++;}
 	   	else function_exist=3;
 	   	if(switchcase==1) yyerror("switch with no case");
 	   	default_place=0;
+      switchcase = 0;
 	   }
 	   ;
 fun: id_fun {
@@ -106,7 +108,7 @@ while_fun: WHILE '(' expression ')' sem_or_not
 		 ;
 ////////////////switch define//////////////////
 switch_fun: SWITCH '(' ID ')' {switchcase=1;}
-		  | CASE int_char ':' {switchcase=0;if(default_place==1)yyerror("default not at last");}
+		  | CASE int_char ':' {switchcase=2;if(default_place==1)yyerror("default not at last");}
 		  | DEFAULT ':' {default_place=1;}
 		  ;
 ////////////////for-loop define///////////////
@@ -146,7 +148,7 @@ cons_exp: ID exp_plum
 
 
 
-exp_plum: '=' initialize_expression
+exp_plum: '=' expression
 		| 
    		;
 
@@ -181,23 +183,6 @@ expr: expression con
 con: con ',' expression //connect
    | ',' expression
    ;
-
-initialize_expression: expression '+' expression
-          | expression '-' expression
-          | expression '*' expression
-          | expression '/' expression
-          | expression '%' expression
-          | expression DP
-          | expression DM
-          | expression COMP expression
-          | expression LOR expression
-          | expression LAND expression
-          | '(' expression ')'
-          | ID
-          | UNUM
-          | '!' expression
-          | ID Arr
-          ;
 
 expression: expression '+' expression
           | expression '-' expression
