@@ -42,8 +42,10 @@ program:line ENDLINE program
      |
      ;
 
-line: line TYPE lots_of_declaration ';' {if(compound[stack]==1) yyerror("strict order");
-                        if(switchcase==2)yyerror("define in switchcase");}
+line: line TYPE lots_of_declaration ';' {
+                                          if(compound[stack]==1) yyerror("strict order");
+                                          if(switchcase==2)yyerror("define in switchcase");
+                                        }
     | line CONS TYPE cons_lots_of_declaration ';' {if(compound[stack]==1) yyerror("strict order");}
     | line fun 
 	| line use ';' { compound[stack]=1; }
@@ -56,26 +58,25 @@ use: usage
    | CONTINUE
    | BREAK
    ;
-usage: ID '=' expression
+usage: ID '=' expression {printf("check!!!\n");}
    | ID Arr '=' expression
    | expression
    ;
 
 /////////////////Function define////////////////
-fun_struct: '{' {if(function_exist==1)function_exist=2;else stack++;}
+fun_struct: '{' {if(function_exist==1)function_exist=2;  else stack++;}
 	   | '}' {
-	   	compound[stack]=0;
-	   	if(stack!=0)stack--;
-	   	else function_exist=3;
-	   	if(switchcase==1) yyerror("switch with no case");
-	   	default_place=0;
-      switchcase = 0;
-	   }
+      	   	compound[stack]=0;
+      	   	if(stack!=0)stack--; 	else function_exist=3;
+      	   	if(switchcase==1) yyerror("switch with no case");
+      	   	default_place=0;
+            switchcase = 0;
+      	   }
 	   ;
 fun: id_fun {
-      if(compound[stack]==1) yyerror("strict order");
-     	if(function_exist==2) yyerror("function nested");
-    	function_exist=1;
+              if(compound[stack]==1) yyerror("strict order");
+             	if(function_exist==2) yyerror("function nested");
+            	function_exist=1;
     				}
    | for_fun 
    | if_fun
@@ -133,8 +134,8 @@ lots_of_declaration: declaration ',' lots_of_declaration
  ; 
 
 declaration: ID normal_init
-   | ID Arr Arr_INI
-   | ID Arr
+   | ID Arr_declare Arr_INI
+   | ID Arr_declare
    | ID '(' para ')'
    ;
 
@@ -148,14 +149,17 @@ cons_declaration: ID normal_init
 
 
 
-normal_init: '=' expression
+normal_init: '=' init_expression
            | 
            ;
 
 
 ////////////////Normal Array////////////////
-Arr: '[' expression ']'
-   | Arr '[' expression ']'
+Arr: '[' lots_of_expression ']'
+   | Arr '[' lots_of_expression ']'
+   ;
+Arr_declare: '[' IN ']'
+   | Arr_declare '[' IN ']'
    ;
 Arr_INI: '=' '{' lots_of_expression '}'
        ; 
@@ -196,7 +200,24 @@ expression: expression '+' expression
           | ID
           | UNUM
           | '!' expression
+          | ID Arr
           | func_invocation
+          ;
+
+init_expression: init_expression '+' init_expression
+          | init_expression '-' init_expression
+          | init_expression '*' init_expression
+          | init_expression '/' init_expression
+          | init_expression '%' init_expression
+          | init_expression DP
+          | init_expression DM
+          | init_expression COMP init_expression
+          | init_expression LOR init_expression
+          | init_expression LAND init_expression
+          | '(' init_expression ')'
+          | ID
+          | UNUM
+          | '!' init_expression
           | ID Arr
           ;
 
