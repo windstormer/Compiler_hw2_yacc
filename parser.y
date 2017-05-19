@@ -38,13 +38,13 @@ int default_place=0;
 
 %%
 
-program:line ENDLINE program;
-     | 
+program:line ENDLINE program
+     |
      ;
 
-line: line TYPE S ';' {if(compound[stack]==1) yyerror("strict order");
+line: line TYPE lots_of_declaration ';' {if(compound[stack]==1) yyerror("strict order");
                         if(switchcase==2)yyerror("define in switchcase");}
-    | line CONS TYPE cons_S ';' {if(compound[stack]==1) yyerror("strict order");}
+    | line CONS TYPE cons_lots_of_declaration ';' {if(compound[stack]==1) yyerror("strict order");}
     | line fun 
 	| line use ';' { compound[stack]=1; }
 	| line fun_struct
@@ -84,19 +84,18 @@ fun: id_fun {
    ;
 
 id_fun: TYPE ID '(' para ')'
-   | TYPE ID '(' ')'
    | VOI ID '(' para ')'
-   | VOI ID '(' ')'
    ;
 
 para: para_style ',' para
     | para_style
+    | 
     ;
 
 para_style: TYPE ID
           | TYPE ID Arr
           ;
-func_invocation: ID '(' expr ')'
+func_invocation: ID '(' lots_of_expression ')'
        ;
 ////////////////if-condition define/////////////
 if_fun: IF '(' expression ')'
@@ -128,37 +127,38 @@ for_last: expression ',' for_last
 		| expression
 		| 
 		;
-/////////////////Normal exp/////////////////////
-S: exp ',' S
- | exp
+/////////////////Normal declaration/////////////////////
+lots_of_declaration: declaration ',' lots_of_declaration
+ | declaration
  ; 
 
-exp: ID exp_plum
+declaration: ID normal_init
    | ID Arr Arr_INI
    | ID Arr
+   | ID '(' para ')'
    ;
 
-/////////////////Const exp///////////
-cons_S: cons_exp ',' cons_S
-      | cons_exp
-      ;
+/////////////////Const declaration///////////
+cons_lots_of_declaration: cons_declaration ',' cons_lots_of_declaration
+                        | cons_declaration
+                        ;
 
-cons_exp: ID exp_plum
-   		;
+cons_declaration: ID normal_init
+                ;
 
 
 
-exp_plum: '=' expression
-		| 
-   		;
+normal_init: '=' expression
+           | 
+           ;
 
 
 ////////////////Normal Array////////////////
 Arr: '[' expression ']'
    | Arr '[' expression ']'
    ;
-Arr_INI: '=' '{' expr '}' /*={con}*/
-   ; 
+Arr_INI: '=' '{' lots_of_expression '}'
+       ; 
 
 
 ///////////////Value select//////////////   
@@ -176,13 +176,11 @@ int_char: IN
 		;
 
 ///////////////expression////////////////
-expr: expression con
+lots_of_expression: expression ',' lots_of_expression
 	| expression
 	| 
 	;  
-con: con ',' expression //connect
-   | ',' expression
-   ;
+
 
 expression: expression '+' expression
           | expression '-' expression
