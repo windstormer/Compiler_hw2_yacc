@@ -15,7 +15,7 @@ int default_place=0;
 %}
 %start program
 
-%token ID PUNC TYPE CHAR_TYPE
+%token ID TYPE CHAR_TYPE
 %token IN DOU TF CHA STR NUL
 %token ENDLINE
 %token CONS VOI
@@ -29,10 +29,10 @@ int default_place=0;
 %left LOR
 %left LAND
 %nonassoc '!'
-%left COMP '='
+%left COMP
 %left '+' '-'
 %left '*' '/' '%'
-// %nonassoc IN
+%nonassoc unary
 %left DP DM
 %left '[' ']'
 
@@ -173,7 +173,12 @@ NUM: IN
    | STR
    | NUL
    ;
-UNUM: '-' NUM
+
+INT_DOUBLE: IN
+          | DOU
+          ;
+UNUM: '-' INT_DOUBLE %prec unary
+    | '+' INT_DOUBLE %prec unary
     | NUM
     ;
 int_char: IN
@@ -192,8 +197,8 @@ expression: expression '+' expression
           | expression '*' expression
           | expression '/' expression
           | expression '%' expression
-          | expression DP
-          | expression DM
+          | ID DP
+          | ID DM
           | expression COMP expression
           | expression LOR expression
           | expression LAND expression
@@ -210,8 +215,8 @@ init_expression: init_expression '+' init_expression
           | init_expression '*' init_expression
           | init_expression '/' init_expression
           | init_expression '%' init_expression
-          | init_expression DP
-          | init_expression DM
+          | ID DP
+          | ID DM
           | init_expression COMP init_expression
           | init_expression LOR init_expression
           | init_expression LAND init_expression

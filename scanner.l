@@ -271,7 +271,6 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return ']';
 	if(strcmp(yytext,":")==0)
 		return ':';
-	return PUNC;
 }
 
 <STATE>" "|"\t"
