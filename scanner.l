@@ -158,6 +158,8 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return CASE;
 	if(strcmp(yytext,"default")==0)
 		return DEFAULT;
+	if(strcmp(yytext,"null")==0)
+		return NUL;
 	PrintToken("#key");
 }
 <STATE>{stdio} { 

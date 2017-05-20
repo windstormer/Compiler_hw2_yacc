@@ -16,7 +16,7 @@ int default_place=0;
 %start program
 
 %token ID PUNC TYPE CHAR_TYPE
-%token IN DOU TF CHA STR
+%token IN DOU TF CHA STR NUL
 %token ENDLINE
 %token CONS VOI
 %token LOR LAND LNOT COMP DP DM
@@ -171,6 +171,7 @@ NUM: IN
    | TF
    | CHA
    | STR
+   | NUL
    ;
 UNUM: '-' NUM
     | NUM
