@@ -5,6 +5,7 @@ double d=2.2,e=3.34;
 int a[2];
 int b[3][2];
 int c[2],d[3];
+int g,ed[2];
 int a[2]={3,2,3};
 int b[3][2]={2};
 int a=3;double c=2;int b[2][3]={2,3};
@@ -160,6 +161,7 @@ else if(EMT>999){}
 }
 
 void test_error(){
+// const int b,a[2]={"d"}; //const can't have array
 // int cc(){	int dd(){}  }//function nested detect
 // switch(EMT){case 486: char cc[5]={"12345"};} //define in switchcase
 // switch(EMT486){default: case 3: break;}	//default not at last
@@ -169,4 +171,6 @@ void test_error(){
 // int GG(){	for(;;){} int ee(){} }//function nested detect
 // for(;test;){a=2; int EMT=9487;} //strict order
 // {a=2; int EMT=9487;} //strict order
+	// int a[2/4];//error
 }
+// int a(b[3+2]){}//error

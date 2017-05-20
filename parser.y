@@ -94,7 +94,7 @@ para: para_style ',' para
     ;
 
 para_style: TYPE ID
-          | TYPE ID Arr
+          | TYPE ID Arr_declare
           ;
 func_invocation: ID '(' lots_of_expression ')'
        ;
@@ -130,14 +130,14 @@ for_last: expression ',' for_last
 		;
 /////////////////Normal declaration/////////////////////
 lots_of_declaration: declaration ',' lots_of_declaration
- | declaration
- ; 
+                   | declaration
+                   ; 
 
 declaration: ID normal_init
-   | ID Arr_declare Arr_INI
-   | ID Arr_declare
-   | ID '(' para ')'
-   ;
+           | ID Arr_declare Arr_INI
+           | ID Arr_declare
+           | ID '(' para ')'
+           ;
 
 /////////////////Const declaration///////////
 cons_lots_of_declaration: cons_declaration ',' cons_lots_of_declaration
@@ -159,8 +159,8 @@ Arr: '[' lots_of_expression ']'
    | Arr '[' lots_of_expression ']'
    ;
 Arr_declare: '[' IN ']'
-   | Arr_declare '[' IN ']'
-   ;
+           | Arr_declare '[' IN ']'
+           ;
 Arr_INI: '=' '{' lots_of_expression '}'
        ; 
 
@@ -182,14 +182,14 @@ UNUM: '-' INT_DOUBLE %prec unary
     | NUM
     ;
 int_char: IN
-		| CHA
-		;
+    		| CHA
+    		;
 
 ///////////////expression////////////////
 lots_of_expression: expression ',' lots_of_expression
-	| expression
-	| 
-	;  
+                	| expression
+                	| 
+                	;  
 
 
 expression: expression '+' expression
