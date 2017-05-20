@@ -58,7 +58,7 @@ use: usage
    | CONTINUE
    | BREAK
    ;
-usage: ID '=' expression {printf("check!!!\n");}
+usage: ID '=' expression
    | ID Arr '=' expression
    | expression
    ;
@@ -144,7 +144,7 @@ cons_lots_of_declaration: cons_declaration ',' cons_lots_of_declaration
                         | cons_declaration
                         ;
 
-cons_declaration: ID normal_init
+cons_declaration: ID '=' expression
                 ;
 
 
@@ -205,7 +205,7 @@ expression: expression '+' expression
           | '(' expression ')'
           | ID
           | UNUM
-          | '!' expression
+          | '!' expression 
           | ID Arr
           | func_invocation
           ;

@@ -12,7 +12,9 @@ int a=3;double c=2;int b[2][3]={2,3};
 bool g=true,e=false;
 char c='3';
 char c[2]={"df"};
+double g[3]={};
 bool b[2]={true,false};
+int g=d[2];
 //const
 const int a=3;
 const double b=2.3,c=2;
@@ -47,11 +49,8 @@ l = -2;
 m = 4-(-2);
 n = g+!73;
 o=1+-5+a+++(+5);
-//gj++;
-//jg--;
 tmd[886+9487]=4&&2+gj++;
-//j+2;
-//8787>=33||23;
+REM[EMT()]=486;
 b=cc(EMT);
 //function usage
 emt();
@@ -147,7 +146,7 @@ int mix_use(double g[2][3],char c[3])
 int test_self()	//remove for simple test
 { 
 for(;i<10;i++){}
-for(;i<10&&j>3;i++,j++);
+for(i=0;i<10&&j>3;i++,j++);
 for(;;)
 {
 	for(;;i--){
@@ -157,20 +156,26 @@ for(;;)
 while(QQ);
 if(GG){}
 else if(EMT>999){}
-
+return;
+gj++;
+jg--;
+j+2;
+8787>=33||23;
 }
 
+
 void test_error(){
-// const int b,a[2]={"d"}; //const can't have array
+// const int d; //const should have initialize
+// const int b=2,a[2]={"d"}; //const can't have array
 // int cc(){	int dd(){}  }//function nested detect
 // switch(EMT){case 486: char cc[5]={"12345"};} //define in switchcase
-// switch(EMT486){default: case 3: break;}	//default not at last
+// switch(EMT486){case 6 : break; default: case 3: break;}	//default not at last
 // switch(ETTT){}	//no case inside
 // if(486){a=2; int EMT=9487;} //strict order
 // while(1){a=2; int EMT=9487;} //strict order
 // int GG(){	for(;;){} int ee(){} }//function nested detect
 // for(;test;){a=2; int EMT=9487;} //strict order
 // {a=2; int EMT=9487;} //strict order
-	// int a[2/4];//error
+// int a[2/4];//error
 }
 // int a(b[3+2]){}//error
