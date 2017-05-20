@@ -127,8 +127,8 @@ for_init:
 		| usage ',' for_init
 		| usage
 		;
-for_last: expression ',' for_last
-		| expression
+for_last: usage ',' for_last
+		| usage
 		| 
 		;
 /////////////////Normal declaration/////////////////////
@@ -235,10 +235,10 @@ int main(void){
 	yyparse();
 	if(function_exist!=3)
 	{
-		lastsentence[0]='\0';
-		yyerror(" ");
+    lastsentence[0]='\0';
+		yyerror("Need at least one function");
 	}
-  printf("No syntax error!\n");
+  fprintf(stdout,"No syntax error!\n");
 	return 0;
 }
 int yyerror(char *s){

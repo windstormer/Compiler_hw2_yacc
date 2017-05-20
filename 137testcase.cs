@@ -146,10 +146,10 @@ int mix_use(double g[2][3],char c[3])
 int test_self()	//remove for simple test
 { 
 for(;i<10;i++){}
-for(i=0;i<10&&j>3;i++,j++);
+for(i=0,c++;i<10&&j>3;i++,j++);
 for(;;)
 {
-	for(;;i--){
+	for(;;i--,j=3){
 		for(;j<12;);
 	}
 }
@@ -171,9 +171,7 @@ switch(a)
 			int a=0;
 		}
 }
-
 }
-
 
 void test_error(){
 // const int d; //const should have initialize
