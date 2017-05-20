@@ -11,6 +11,7 @@ int compound[200]={0};
 int stack=0;
 int switchcase=0;
 int default_place=0;
+int curstack=0;
 
 %}
 %start program
@@ -44,11 +45,11 @@ program:line ENDLINE program
 
 line: line TYPE lots_of_declaration ';' {
                                           if(compound[stack]==1) yyerror("strict order");
-                                          if(switchcase==2)yyerror("define in switchcase");
+                                          if(switchcase==2&&curstack==stack)yyerror("define in switchcase");
                                         }
     | line CONS TYPE cons_lots_of_declaration ';' {if(compound[stack]==1) yyerror("strict order");}
     | line fun 
-	| line use ';' { compound[stack]=1; }
+	| line use ';' {  if(stack==0) yyerror("statement in global"); compound[stack]=1; }
 	| line fun_struct
 	| 
 	;
@@ -64,13 +65,15 @@ usage: ID '=' expression
    ;
 
 /////////////////Function define////////////////
-fun_struct: '{' {if(function_exist==1)function_exist=2;  else stack++;}
+fun_struct: '{' {if(function_exist==1)function_exist=2; stack++;}
 	   | '}' {
       	   	compound[stack]=0;
-      	   	if(stack!=0)stack--; 	else function_exist=3;
+      	   	if(stack!=0)stack--; 
+            if(function_exist==2)function_exist=3;
       	   	if(switchcase==1) yyerror("switch with no case");
       	   	default_place=0;
             switchcase = 0;
+            curstack=0;
       	   }
 	   ;
 fun: id_fun {
@@ -78,10 +81,10 @@ fun: id_fun {
              	if(function_exist==2) yyerror("function nested");
             	function_exist=1;
     				}
-   | for_fun 
-   | if_fun
-   | while_fun
-   | switch_fun
+   | for_fun {  if(stack==0) yyerror("statement in global");}
+   | if_fun {  if(stack==0) yyerror("statement in global");}
+   | while_fun {  if(stack==0) yyerror("statement in global");}
+   | switch_fun {  if(stack==0) yyerror("statement in global");}
    ;
 
 id_fun: TYPE ID '(' para ')'
@@ -108,7 +111,7 @@ while_fun: WHILE '(' expression ')' sem_or_not
 		 ;
 ////////////////switch define//////////////////
 switch_fun: SWITCH '(' ID ')' {switchcase=1;}
-		  | CASE int_char ':' {switchcase=2;if(default_place==1)yyerror("default not at last");}
+		  | CASE int_char ':' {switchcase=2;curstack=stack;if(default_place==1)yyerror("default not at last");}
 		  | DEFAULT ':' {default_place=1;}
 		  ;
 ////////////////for-loop define///////////////

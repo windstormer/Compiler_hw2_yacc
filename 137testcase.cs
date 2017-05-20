@@ -161,6 +161,17 @@ gj++;
 jg--;
 j+2;
 8787>=33||23;
+
+switch(a)
+{
+	int i=0;
+	case 1:
+		if(i==2)
+		{
+			int a=0;
+		}
+}
+
 }
 
 
@@ -179,3 +190,5 @@ void test_error(){
 // int a[2/4];//error
 }
 // int a(b[3+2]){}//error
+// a=2;//statement in global
+// for(;;){}//statement in global
