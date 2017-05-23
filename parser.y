@@ -7,6 +7,7 @@ extern int lineCount;
 extern char lastsentence[3000];
 extern char* yytext;
 int function_exist=0;
+int have_function=0;
 int compound[200]={0};
 int stack=0;
 int switchcase=0;
@@ -70,6 +71,7 @@ fun_struct: '{' {if(function_exist==1)function_exist=2; stack++;}
       	   	compound[stack]=0;
       	   	if(stack!=0)stack--; 
             if(function_exist==2)function_exist=3;
+            if(function_exist==3 && have_function==0) have_function=1;
       	   	if(switchcase==1) yyerror("switch with no case");
       	   	default_place=0;
             switchcase = 0;
@@ -99,7 +101,7 @@ para: para_style ',' para
 para_style: TYPE ID
           | TYPE ID Arr_declare
           ;
-func_invocation: ID '(' lots_of_expression ')'
+func_invocation: ID '(' no_or_more_expression ')'
        ;
 ////////////////if-condition define/////////////
 if_fun: IF '(' expression ')'
@@ -158,13 +160,13 @@ normal_init: '=' init_expression
 
 
 ////////////////Normal Array////////////////
-Arr: '[' lots_of_expression ']'
-   | Arr '[' lots_of_expression ']'
+Arr: '[' expression ']'
+   | Arr '[' expression ']'
    ;
 Arr_declare: '[' IN ']'
            | Arr_declare '[' IN ']'
            ;
-Arr_INI: '=' '{' lots_of_expression '}'
+Arr_INI: '=' '{' no_or_more_expression '}'
        ; 
 
 
@@ -189,9 +191,12 @@ int_char: IN
     		;
 
 ///////////////expression////////////////
+no_or_more_expression: lots_of_expression
+                     |
+                     ;
+
 lots_of_expression: expression ',' lots_of_expression
                 	| expression
-                	| 
                 	;  
 
 
@@ -233,7 +238,12 @@ init_expression: init_expression '+' init_expression
 %%
 int main(void){
 	yyparse();
-	if(function_exist!=3)
+  if(function_exist!=3)
+  {
+    lastsentence[0]='\0';
+    yyerror("Error function format!");
+  }
+	if(have_function!=1)
 	{
     lastsentence[0]='\0';
 		yyerror("Need at least one function");

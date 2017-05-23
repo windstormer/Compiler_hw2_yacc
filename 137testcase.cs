@@ -186,7 +186,9 @@ void test_error(){
 // for(;test;){a=2; int EMT=9487;} //strict order
 // {a=2; int EMT=9487;} //strict order
 // int a[2/4];//error
+	// a[ 2, ] = 5; //error format
 }
 // int a(b[3+2]){}//error
 // a=2;//statement in global
 // for(;;){}//statement in global
+// int QQ(){ //error function format
