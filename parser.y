@@ -49,7 +49,7 @@ line: line TYPE lots_of_declaration ';' {
                                           if(switchcase==2&&curstack==stack)yyerror("define in switchcase");
                                         }
     | line CONS TYPE cons_lots_of_declaration ';' {if(compound[stack]==1) yyerror("strict order");}
-    | line fun 
+    | line fun
 	| line use ';' {  if(stack==0) yyerror("statement in global"); compound[stack]=1; }
 	| line fun_struct
 	| 
@@ -70,6 +70,7 @@ fun_struct: '{' {if(function_exist==1)function_exist=2; stack++;}
 	   | '}' {
       	   	compound[stack]=0;
       	   	if(stack!=0)stack--; 
+            if(function_exist!=2) yyerror("syntax error");
             if(function_exist==2)function_exist=3;
             if(function_exist==3 && have_function==0) have_function=1;
       	   	if(switchcase==1) yyerror("switch with no case");
@@ -89,9 +90,13 @@ fun: id_fun {
    | switch_fun {  if(stack==0) yyerror("statement in global");}
    ;
 
-id_fun: TYPE ID '(' para ')'
-   | VOI ID '(' para ')'
+id_fun: TYPE ID '(' para ')' function_def_or_not 
+   | VOI ID '(' para ')' function_def_or_not
    ;
+
+function_def_or_not: ';' {function_exist=0;}
+                   |
+                   ;
 
 para: para_style ',' para
     | para_style
@@ -141,7 +146,7 @@ lots_of_declaration: declaration ',' lots_of_declaration
 declaration: ID normal_init
            | ID Arr_declare Arr_INI
            | ID Arr_declare
-           | ID '(' para ')'
+           // | ID '(' para ')'
            ;
 
 /////////////////Const declaration///////////
@@ -149,7 +154,7 @@ cons_lots_of_declaration: cons_declaration ',' cons_lots_of_declaration
                         | cons_declaration
                         ;
 
-cons_declaration: ID '=' expression
+cons_declaration: ID '=' NUM
                 ;
 
 
@@ -179,11 +184,12 @@ NUM: IN
    | NUL
    ;
 
-INT_DOUBLE: IN
+INT_DOUBLE_ID: IN
           | DOU
+          | ID
           ;
-UNUM: '-' INT_DOUBLE %prec unary
-    | '+' INT_DOUBLE %prec unary
+UNUM: '-' INT_DOUBLE_ID %prec unary
+    | '+' INT_DOUBLE_ID %prec unary
     | NUM
     ;
 int_char: IN

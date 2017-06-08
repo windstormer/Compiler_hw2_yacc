@@ -132,6 +132,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 
 <STATE>{key} { 
 	strcpy(tempstring,yytext);
+	PrintToken("#key");
 	if(strcmp(yytext,"const")==0)
 		return CONS;
 	if(strcmp(yytext,"void")==0)
@@ -160,7 +161,7 @@ Invalid_int 0[0-9]+|0[xX][0-9a-fA-F]+
 		return DEFAULT;
 	if(strcmp(yytext,"null")==0)
 		return NUL;
-	PrintToken("#key");
+
 }
 <STATE>{stdio} { 
 	strcpy(tempstring,yytext);
